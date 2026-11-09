@@ -1,0 +1,17 @@
+{
+  "name": "pdfnamao-comprimir",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Compressor de PDF que roda no navegador, sem envio do arquivo. Código-fonte da ferramenta Comprimir do PDF na Mão.",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "vendor": "node tools/vendor.mjs",
+    "serve": "node tools/serve.mjs"
+  },
+  "devDependencies": {
+    "@neslinesli93/qpdf-wasm": "0.3.0",
+    "@okathira/ghostpdl-wasm": "1.1.0",
+    "bootstrap": "5.3.8"
+  }
+}

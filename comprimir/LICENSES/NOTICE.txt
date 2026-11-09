@@ -1,0 +1,26 @@
+PDF na Mão: Comprimir - licenças e componentes de terceiros
+
+Aplicação
+  Licença: GNU AGPL 3.0 ou posterior (AGPL-3.0.txt).
+  Esta ferramenta é distribuída junto com o Ghostscript, que usa a mesma licença.
+  As demais ferramentas do site são programas separados, com licenças próprias.
+
+Ghostscript 10.06.0, compilado para WebAssembly (vendor/gs)
+  Pacote: @okathira/ghostpdl-wasm 1.1.0
+  Licença: GNU AGPL 3.0 ou posterior (AGPL-3.0.txt)
+  Código-fonte da compilação: https://github.com/okathira/ghostpdl-wasm
+  Código-fonte do Ghostscript: https://github.com/ArtifexSoftware/ghostpdl
+  O Ghostscript inclui bibliotecas de terceiros, com licenças próprias, descritas
+  no código-fonte acima.
+
+qpdf 12.2.0, compilado para WebAssembly (vendor/qpdf)
+  Pacote: @neslinesli93/qpdf-wasm 0.3.0 (ISC)
+  Licença do qpdf: Apache 2.0 (Apache-2.0.txt)
+  Código-fonte da compilação: https://github.com/neslinesli93/qpdf-wasm
+  Código-fonte do qpdf: https://github.com/qpdf/qpdf
+
+Bootstrap 5.3.8 (assets/bootstrap.min.css)
+  Licença: MIT (Bootstrap-MIT.txt)
+  Código-fonte: https://github.com/twbs/bootstrap
+
+Versões e hashes dos motores publicados: vendor/VERSIONS.txt

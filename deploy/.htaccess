@@ -1,0 +1,29 @@
+# Configuração de produção no Apache. Fica na raiz da pasta publicada.
+# Exige AllowOverride All.
+#
+# Os cabeçalhos ficam de propósito fora de <IfModule>: sem mod_headers, o Apache
+# responde 500 em vez de publicar a página sem a CSP. A CSP do index.html não
+# alcança o Worker, que só recebe a política pelo cabeçalho.
+Require all granted
+Options -Indexes
+DirectoryIndex index.html
+
+AddType application/wasm .wasm
+AddType text/javascript .js
+AddCharset utf-8 .html .js .css .txt
+
+Header always set Content-Security-Policy "default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; connect-src 'self'; style-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+Header always set X-Content-Type-Options "nosniff"
+Header always set Referrer-Policy "no-referrer"
+
+# Revalida sempre, para os arquivos de uma versão nunca se misturarem aos de outra.
+# Sem mudança, a resposta é 304 e o motor não é baixado de novo.
+Header set Cache-Control "no-cache"
+
+# Opcional: o mod_deflate vem desativado no XAMPP. Com ele, o motor cai de 16 MB para 11 MB.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/wasm text/javascript text/css text/html text/plain
+  # O mod_deflate acrescenta -gzip ao ETag e deixa de reconhecer o arquivo inalterado.
+  # Sem esta regra, o navegador baixaria o motor inteiro a cada visita.
+  RequestHeader edit "If-None-Match" "^\"(.*)-gzip\"$" "\"$1\""
+</IfModule>

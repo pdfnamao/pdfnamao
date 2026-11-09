@@ -1,0 +1,9 @@
+# Gerado por tools/vendor.mjs. Não edite.
+
+@okathira/ghostpdl-wasm@1.1.0 | AGPL-3.0-or-later
+  gs/gs.js  sha256:5e7e3b3dfc7afc5e60de8dd6dab66145c75afb74f7d671f711f390b3bb69c6d0
+  gs/gs.wasm  sha256:e8aaf3af75da65fe0af8d49b30fa717e4ff13eedbbdc0cdd5700f54fb8f667e6
+
+@neslinesli93/qpdf-wasm@0.3.0 | ISC (wrapper); qpdf: Apache-2.0
+  qpdf/qpdf.js  sha256:c0e8fe62e0c3385dd8cb5d6b613f74d87a4138a3a3343e2add45a067a14d0884
+  qpdf/qpdf.wasm  sha256:abd933f4ccace4f732999381b21aec8b7e3726f18a5b167fafd57f88dd440876

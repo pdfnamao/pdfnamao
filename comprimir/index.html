@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="pt-BR" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; connect-src 'self'; style-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+  <meta name="description" content="Reduza o tamanho de arquivos PDF no navegador, sem enviar o documento para nenhum servidor.">
+  <title>Comprimir PDF | PDF na Mão</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/brand.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="page-wide header-inner">
+      <a class="brand" href="../">
+        <img src="assets/icon.svg" alt="" width="26" height="26">
+        PDF na Mão
+      </a>
+      <nav class="site-nav" aria-label="Principal">
+        <a href="../comprimir/" aria-current="page">Comprimir</a>
+        <a href="../juntar/">Juntar</a>
+        <a href="../empresas/">Para empresas</a>
+        <a class="nav-support" href="../apoiar/">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-10-9.2C.4 8.700 2.100 5 5.700 5c2.300 0 3.900 1.300 6.300 3.800C14.400 6.300 16 5 18.300 5c3.600 0 5.300 3.700 3.700 6.800C19.500 16.400 12 21 12 21Z"/></svg>
+          Apoiar
+        </a>
+      </nav>
+    </div>
+  </header>
+  <div class="trust-bar"><p class="page-wide">Seus arquivos não saem do seu computador</p></div>
+
+  <main class="page-column">
+    <noscript>
+      <div class="alert alert-warning">Esta página precisa de JavaScript, porque a compressão acontece no próprio navegador.</div>
+    </noscript>
+
+    <div id="notice-mobile" class="alert alert-warning" role="alert" hidden>
+      <strong>Celulares e tablets não são compatíveis.</strong>
+      Abra esta página em um computador, no Chrome.
+    </div>
+
+    <div id="notice-browser" class="alert alert-secondary" role="status" hidden>
+      <strong>Use o Chrome para o melhor resultado.</strong>
+      Neste navegador, a compressão pode ser bem mais lenta ou falhar em arquivos grandes.
+    </div>
+
+    <p id="live-status" class="visually-hidden" role="status" aria-live="polite"></p>
+
+    <section id="view-select" class="view" aria-labelledby="select-title">
+      <h1 id="select-title">Reduza o tamanho do seu PDF</h1>
+      <p class="lead-text">A compressão acontece aqui no navegador. Nenhum documento é enviado pela internet.</p>
+
+      <label id="dropzone" class="dropzone" for="file-input">
+        <input id="file-input" class="visually-hidden" type="file" accept=".pdf,application/pdf">
+        <svg class="dropzone-icon" viewBox="0 0 24 24" width="36" height="36" aria-hidden="true">
+          <path d="M12 16V5m0 0-4 4m4-4 4 4M5 19h14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="dropzone-title">Arraste o PDF para cá</span>
+        <span class="dropzone-or">ou</span>
+        <span class="btn btn-primary">Selecionar arquivo</span>
+        <span id="max-size" class="dropzone-hint"></span>
+      </label>
+      <div id="select-error" class="alert alert-danger mt-3" role="alert" hidden></div>
+    </section>
+
+    <section id="view-analyzing" class="view panel text-center" hidden>
+      <div class="spinner-border text-primary" aria-hidden="true"></div>
+      <p class="mt-3 mb-0">Validando arquivo…</p>
+    </section>
+
+    <section id="view-ready" class="view panel" hidden aria-labelledby="ready-name">
+      <div class="file-summary">
+        <div class="file-summary-text">
+          <h1 id="ready-name" class="file-name"></h1>
+          <p id="ready-details" class="file-details"></p>
+        </div>
+        <button id="change-file" type="button" class="btn btn-outline-secondary btn-sm">Trocar arquivo</button>
+      </div>
+
+      <div id="ready-notice" class="alert alert-secondary" role="status" hidden></div>
+
+      <div id="losses" class="alert alert-warning" hidden>
+        <p class="alert-heading"><strong>Este PDF tem recursos que serão perdidos no arquivo comprimido:</strong></p>
+        <ul id="losses-list"></ul>
+        <div class="form-check mb-0">
+          <input id="losses-confirm" class="form-check-input" type="checkbox">
+          <label class="form-check-label" for="losses-confirm">Entendi e quero continuar. O arquivo original não será alterado.</label>
+        </div>
+      </div>
+
+      <div id="tags-notice" class="alert alert-secondary" role="status" hidden>
+        <strong>Acessibilidade:</strong> este PDF tem tags para leitores de tela, que serão removidas no arquivo comprimido. Marcadores e links são mantidos.
+      </div>
+
+      <fieldset class="profiles">
+        <legend>Nível de compressão</legend>
+        <label class="profile">
+          <input class="form-check-input" type="radio" name="profile" value="light">
+          <span class="profile-text">
+            <strong>Leve</strong>
+            <span>Prioriza a qualidade. Boa opção para impressão.</span>
+          </span>
+        </label>
+        <label class="profile">
+          <input class="form-check-input" type="radio" name="profile" value="recommended">
+          <span class="profile-text">
+            <strong>Recomendado</strong>
+            <span>Equilibra qualidade e tamanho. Bom para enviar e ler na tela.</span>
+          </span>
+        </label>
+        <label class="profile">
+          <input class="form-check-input" type="radio" name="profile" value="high">
+          <span class="profile-text">
+            <strong>Alto</strong>
+            <span>Prioriza o menor tamanho. Letras pequenas em documentos digitalizados podem ficar difíceis de ler.</span>
+          </span>
+        </label>
+      </fieldset>
+
+      <button id="start" type="button" class="btn btn-primary btn-lg w-100">Comprimir PDF</button>
+      <p id="start-hint" class="start-hint" hidden>Marque a confirmação no aviso acima para continuar.</p>
+
+      <details class="caveats">
+        <summary>O que pode mudar no documento</summary>
+        <p>A compressão regrava o PDF. Anotações, links e metadados podem ser alterados. Confira o resultado antes de substituir o original.</p>
+      </details>
+    </section>
+
+    <section id="view-processing" class="view panel" hidden aria-labelledby="processing-title">
+      <h1 id="processing-title" class="panel-title">Comprimindo seu PDF</h1>
+      <ol id="steps" class="steps">
+        <li data-step="validating" class="is-done">Validando arquivo</li>
+        <li data-step="loading-engine">Carregando motor</li>
+        <li data-step="compressing">Comprimindo <span id="page-progress" class="step-detail"></span></li>
+        <li data-step="validating-output">Validando resultado <span id="validation-hint" class="step-detail" hidden>pode demorar em arquivos grandes</span></li>
+      </ol>
+      <div id="progress" class="progress" role="progressbar" aria-label="Páginas processadas" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden>
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+      <div class="processing-footer">
+        <span class="elapsed">Tempo decorrido: <span id="elapsed">00:00</span></span>
+        <button id="cancel" type="button" class="btn btn-outline-secondary">Cancelar</button>
+      </div>
+    </section>
+
+    <section id="view-result" class="view panel" hidden aria-labelledby="result-title">
+      <p class="result-label">Concluído</p>
+      <h1 id="result-title" class="result-number"></h1>
+      <p id="result-file" class="file-details"></p>
+
+      <dl class="compare">
+        <div class="compare-row">
+          <dt>Original</dt>
+          <dd><span class="bar-track"><span class="bar bar-original"></span></span><span id="size-original" class="compare-value"></span></dd>
+        </div>
+        <div class="compare-row">
+          <dt>Comprimido</dt>
+          <dd><span class="bar-track"><span id="bar-final" class="bar bar-final"></span></span><span id="size-final" class="compare-value"></span></dd>
+        </div>
+      </dl>
+
+      <div id="result-repaired" class="alert alert-warning" hidden>
+        <strong>O original tem erros internos.</strong>
+        O compressor precisou contorná-los, e parte do conteúdo pode ter sido afetada. Confira o resultado com atenção.
+      </div>
+
+      <a id="download" class="btn btn-primary btn-lg w-100" download>Baixar PDF comprimido</a>
+      <p class="start-hint">Confira o arquivo baixado antes de substituir o original.</p>
+      <div class="secondary-actions">
+        <button type="button" class="btn btn-link" data-action="other-profile">Tentar outro nível</button>
+        <button type="button" class="btn btn-link" data-action="new-file">Comprimir outro arquivo</button>
+      </div>
+
+      <div class="support-nudge"><span>Esta ferramenta ajudou você?</span><a class="support-link" href="../apoiar/" target="_blank" rel="noopener">Apoie o projeto com uma doação</a></div>
+    </section>
+
+    <section id="view-no-gain" class="view panel" hidden aria-labelledby="no-gain-title">
+      <h1 id="no-gain-title" class="panel-title">Não houve redução vantajosa</h1>
+      <p>Seu arquivo original já é a melhor opção com este nível de compressão, então nenhum arquivo novo foi gerado.</p>
+      <p id="no-gain-details" class="file-details"></p>
+      <div id="no-gain-repaired" class="alert alert-warning" hidden>
+        O original tem erros internos que o compressor precisou contornar.
+      </div>
+      <div class="secondary-actions">
+        <button type="button" class="btn btn-primary" data-action="other-profile">Tentar outro nível</button>
+        <button type="button" class="btn btn-link" data-action="new-file">Comprimir outro arquivo</button>
+      </div>
+    </section>
+
+    <section id="view-error" class="view panel" hidden aria-labelledby="error-title">
+      <h1 id="error-title" class="panel-title">Não foi possível concluir</h1>
+      <div id="error-message" class="alert alert-danger" role="alert"></div>
+      <div class="secondary-actions">
+        <button id="error-retry" type="button" class="btn btn-primary" data-action="other-profile">Tentar novamente</button>
+        <button type="button" class="btn btn-link" data-action="new-file">Escolher outro arquivo</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-wide site-footer">
+    <span>Navegador recomendado: Chrome para computador.</span>
+    <span class="footer-links">
+      <a href="../">Ferramentas</a>
+      <a href="../empresas/">Para empresas</a>
+      <a href="../apoiar/">Apoiar</a>
+      <a id="link-privacidade" href="../privacidade/">Privacidade</a>
+      <a id="source-link" hidden>Código-fonte</a>
+      <a id="licenses-link" href="LICENSES/NOTICE.txt">Licenças</a>
+    </span>
+  </footer>
+
+  <script type="module" src="assets/app.js"></script>
+</body>
+</html>
